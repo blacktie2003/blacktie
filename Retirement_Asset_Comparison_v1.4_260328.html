@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>개인 vs 법인 비교 분석 v1.1</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--bg:#fff;--bg2:#f7f7f5;--bg3:#f0efe9;--text:#1a1a1a;--text2:#666;--text3:#999;--border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);--green:#1D9E75;--green-bg:#EAF3DE;--green-text:#3B6D11;--red:#D85A30;--red-bg:#FCEBEB;--red-text:#A32D2D;--amber:#BA7517;--amber-bg:#FAEEDA;--amber-text:#854F0B;--blue:#378ADD;--blue-bg:#E6F1FB;--blue-text:#185FA5;--radius:8px;--radius-lg:12px}
+[data-theme="dark"]{--bg:#1c1c1a;--bg2:#242422;--bg3:#2c2c2a;--text:#f0efe9;--text2:#a0a09a;--text3:#666;--border:rgba(255,255,255,0.10);--border2:rgba(255,255,255,0.20);--green-bg:#1a3020;--green-text:#5DCAA5;--red-bg:#2e1515;--red-text:#F09595;--amber-bg:#2a1f0a;--amber-text:#FAC775;--blue-bg:#0d1f33;--blue-text:#85B7EB}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:13px;background:var(--bg3);color:var(--text);min-height:100vh}
+.header{background:var(--bg);border-bottom:.5px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.htt{font-size:14px;font-weight:700}.hts{font-size:11px;color:var(--text3);margin-top:1px}
+.tbtn{padding:5px 10px;font-size:11px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg2);color:var(--text2);cursor:pointer}
+.wrap{max-width:1100px;margin:0 auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--bg);border-radius:var(--radius-lg);border:.5px solid var(--border);padding:16px}
+.ct{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.slbl{font-size:11px;font-weight:700;color:var(--text2);padding-bottom:6px;border-bottom:1.5px solid var(--border2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.tbadge{font-size:12px;font-weight:700;padding:2px 10px;border-radius:20px}
+.tok{background:var(--green-bg);color:var(--green-text)}.twn{background:var(--amber-bg);color:var(--amber-text)}
+.ig4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:10px}
+.ig3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:8px}
+.ic{background:var(--bg2);border-radius:var(--radius);padding:8px 10px}
+.ic.p{border:.5px solid var(--blue);background:var(--blue-bg)}
+.ic.c{border:.5px solid var(--green);background:var(--green-bg)}
+.ic.em{border:.5px solid var(--amber);background:var(--amber-bg)}
+.ic label{font-size:10px;color:var(--text3);display:block;margin-bottom:3px}
+.ic.p label{color:var(--blue-text)}.ic.c label{color:var(--green-text)}.ic.em label{color:var(--amber-text)}
+.irow{display:flex;align-items:center;gap:4px}
+.ic input{width:100%;font-size:12px;padding:4px 7px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);text-align:right}
+.ic input:focus{outline:none;border-color:var(--blue)}
+.un{font-size:10px;color:var(--text3);white-space:nowrap;min-width:20px}
+.sumrow{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg2);border-radius:var(--radius);font-size:12px;margin-bottom:8px}
+.scol{display:flex;flex-direction:column;align-items:center;gap:2px}
+.scol .l{font-size:10px;color:var(--text3)}
+.scol .v{font-size:13px;font-weight:700}
+.eq{font-size:16px;color:var(--text3)}
+.divider{height:.5px;background:var(--border);margin:10px 0}
+.rbtn{width:100%;padding:10px;font-size:13px;font-weight:700;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);cursor:pointer;margin-top:4px}
+.rbtn:hover{opacity:.82}
+.c3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cc{background:var(--bg2);border-radius:var(--radius-lg);padding:12px 14px;border:.5px solid var(--border)}
+.cl{font-size:10px;color:var(--text3);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.cr{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:12px;border-bottom:.5px solid var(--border)}
+.cr:last-child{border-bottom:none}
+.cr .n{color:var(--text2)}
+.vp{color:var(--blue);font-weight:700}.vc{color:var(--green);font-weight:700}
+.vg{color:var(--green);font-weight:700}.vr{color:var(--red);font-weight:700}.va{color:var(--amber);font-weight:700}
+.bcard{background:var(--green-bg);border:.5px solid var(--green);border-radius:var(--radius-lg);padding:14px}
+.bt{font-size:11px;font-weight:700;color:var(--green-text);margin-bottom:10px}
+.bg4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.bc{background:var(--bg);border-radius:var(--radius);padding:9px 11px}
+.bc .l{font-size:10px;color:var(--text3);margin-bottom:3px}
+.bc .v{font-size:15px;font-weight:700}
+.bc .vg{color:var(--green)}.bc .vr{color:var(--red)}.bc .vb{color:var(--blue)}
+.bc .s{font-size:10px;color:var(--text3);margin-top:2px}
+.bc.big{grid-column:span 2}.bc.big .v{font-size:22px}
+.cw{position:relative;width:100%;height:280px}
+.leg{display:flex;gap:12px;font-size:11px;color:var(--text2);margin-bottom:8px;flex-wrap:wrap}
+.ld{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:3px;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{font-size:10px;font-weight:700;color:var(--text3);padding:5px 6px;border-bottom:.5px solid var(--border);text-align:right;background:var(--bg2);white-space:nowrap}
+th.c{text-align:center}
+td{padding:4px 6px;border-bottom:.5px solid var(--border);text-align:right;white-space:nowrap}
+td.c{text-align:center}
+tr:hover td{background:var(--bg2)}
+tr.tot td{font-weight:700;background:var(--bg2)}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+input.changed{color:var(--blue)!important;font-weight:700}
+.save-row{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}
+.sbtn{padding:6px;font-size:11px;border:.5px solid var(--border2);border-radius:var(--radius);cursor:pointer;text-align:center;background:var(--bg2);color:var(--text2)}
+.sbtn:hover{background:var(--bg3)}
+.sbtn.save{background:var(--green-bg);color:var(--green-text);border-color:var(--green)}
+#save_status{font-size:10px;text-align:center;margin-top:3px;height:14px;color:var(--text3)}
+
+/* JSON 모달 */
+.json-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;align-items:center;justify-content:center;}
+.json-modal-bg.open{display:flex;}
+.json-modal{background:var(--bg);border:.5px solid var(--border);border-radius:12px;padding:20px;width:min(520px,92vw);max-height:80vh;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,0.18);}
+.json-modal-title{font-size:14px;font-weight:700;color:var(--text);}
+.json-modal-hint{font-size:11px;color:var(--text3);line-height:1.6;}
+.json-modal textarea{flex:1;min-height:220px;font-family:monospace;font-size:11px;background:var(--bg2);border:.5px solid var(--border2);border-radius:6px;padding:8px;color:var(--text);resize:vertical;outline:none;}
+.json-modal-btns{display:flex;gap:8px;justify-content:flex-end;}
+.json-modal-btns button{font-size:12px;padding:6px 14px;border-radius:6px;border:.5px solid var(--border2);cursor:pointer;background:var(--bg2);color:var(--text);}
+.json-modal-btns .btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.json-modal-btns .btn-copy{background:var(--green-bg);color:var(--green-text);border-color:var(--green);}
+
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="htt">개인 vs 법인 비교 분석</div><div class="hts">동일 조건 (운용 40억 + 10억 = 50억) · 총자산 기준 직접 비교</div></div>
+  <button class="tbtn" onclick="toggleTheme()">다크모드</button>
+</div>
+<div class="wrap">
+
+<div class="card">
+  <div class="ct">시뮬레이션 조건</div>
+  <div class="slbl">운용자산 구성 <span class="tbadge tok" id="totalBadge">합계: 40억</span></div>
+  <div class="sumrow">
+    <div class="scol"><div class="l">퇴직연금</div><div class="v" style="color:var(--blue)" id="s_dc">–</div></div>
+    <div class="eq">+</div>
+    <div class="scol"><div class="l">IRP·연저</div><div class="v" style="color:var(--blue)" id="s_irp">–</div></div>
+    <div class="eq">+</div>
+    <div class="scol"><div class="l">안세공</div><div class="v" style="color:var(--blue)" id="s_tf">–</div></div>
+    <div class="eq">+</div>
+    <div class="scol"><div class="l">주식</div><div class="v" style="color:var(--blue)" id="s_st">–</div></div>
+    <div class="eq">+</div>
+    <div class="scol"><div class="l">안정</div><div class="v" style="color:var(--blue)" id="s_sf">–</div></div>
+    <div class="eq">=</div>
+    <div class="scol"><div class="l">운용합계</div><div class="v" style="color:var(--green);font-size:16px" id="s_total">–</div></div>
+  </div>
+  <div class="ig4">
+    <div class="ic"><label>퇴직연금 (DC+퇴직금)</label><div class="irow"><input type="number" id="a_dc" value="180000" oninput="updateSum()"><span class="un">만</span></div></div>
+    <div class="ic"><label>IRP·연저 (연저2 제외)</label><div class="irow"><input type="number" id="a_irp" value="30000" oninput="updateSum()"><span class="un">만</span></div></div>
+    <div class="ic"><label>안세공 (연저2)</label><div class="irow"><input type="number" id="a_tf" value="10000" oninput="updateSum()"><span class="un">만</span></div></div>
+    <div class="ic"><label>주식·성장자산</label><div class="irow"><input type="number" id="a_stock" value="130000" oninput="updateSum()"><span class="un">만</span></div></div>
+    <div class="ic"><label>주식 중 국내 비율</label><div class="irow"><input type="number" id="dom_ratio_pct" value="35" min="0" max="100" step="1" oninput="updateSum()"><span class="un">%</span></div><div style="font-size:10px;color:var(--text3);margin-top:2px">미래국내 / 전체주식</div></div>
+    <div class="ic"><label>안정·대체자산</label><div class="irow"><input type="number" id="a_safe" value="50000" oninput="updateSum()"><span class="un">만</span></div></div>
+    <div class="ic"><label>성장자산 수익률</label><div class="irow"><input type="number" id="spr" value="6.2" step="0.5"><span class="un">%</span></div></div>
+    <div class="ic"><label>안정자산 수익률</label><div class="irow"><input type="number" id="sfr" value="2.6" step="0.5"><span class="un">%</span></div></div>
+    <div class="ic"><label>근속연수</label><div class="irow"><input type="number" id="work_years" value="19"><span class="un">년</span></div></div>
+    <div class="ic"><label>생활비 은퇴~61세</label><div class="irow"><input type="number" id="monthly" value="3000"><span class="un">만/월</span></div></div>
+    <div class="ic"><label>생활비 62~65세</label><div class="irow"><input type="number" id="monthly2" value="1500"><span class="un">만/월</span></div></div>
+    <div class="ic"><label>생활비 66~69세</label><div class="irow"><input type="number" id="monthly3" value="1300"><span class="un">만/월</span></div></div>
+    <div class="ic"><label>생활비 70~74세</label><div class="irow"><input type="number" id="monthly4" value="1100"><span class="un">만/월</span></div></div>
+    <div class="ic"><label>생활비 75~85세</label><div class="irow"><input type="number" id="monthly5" value="1000"><span class="un">만/월</span></div></div>
+    <div class="ic"><label>인플레이션</label><div class="irow"><input type="number" id="inflation" value="2.5" step="0.1"><span class="un">%</span></div>
+      <div style="display:flex;align-items:center;gap:5px;margin-top:4px">
+        <input type="checkbox" id="use_inflation" checked style="width:auto;cursor:pointer">
+        <label for="use_inflation" style="display:inline;font-size:10px;color:var(--text3);cursor:pointer">인플레이션 반영</label>
+      </div>
+      
+    </div>
+    <div class="ic"><label>은퇴나이</label><div class="irow"><input type="number" id="retireAge" value="57"><span class="un">세</span></div></div>
+    <div class="ic"><label>기대수명</label><div class="irow"><input type="number" id="lifeAge" value="85"><span class="un">세</span></div></div>
+    <div class="ic"><label>국민연금 월수령</label><div class="irow"><input type="number" id="nps_m" value="150"><span class="un">만</span></div></div>
+    <div class="ic"><label>국민연금 시작나이</label><div class="irow"><input type="number" id="nps_a" value="62"><span class="un">세</span></div></div>
+    <div class="ic"><label>주택연금 월수령</label><div class="irow"><input type="number" id="hm" value="250"><span class="un">만</span></div></div>
+    <div class="ic"><label>주택연금 시작나이</label><div class="irow"><input type="number" id="ha" value="70"><span class="un">세</span></div></div>
+    <div class="ic"><label>IRP 연간 인출 한도</label><div class="irow"><input type="number" id="irp_draw" value="1500"><span class="un">만</span></div></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div>
+      <div class="slbl" style="color:var(--blue-text)">개인 — 비상금</div>
+      <div class="ig3">
+        <div class="ic p" style="grid-column:span 3"><label>비상금 잔액 (운용 시뮬레이션 미포함)</label><div class="irow"><input type="number" id="p_em" value="100000" oninput="updateSum()"><span class="un">만</span></div></div>
+      </div>
+      <div class="sumrow" style="background:var(--blue-bg)">
+        <div class="scol"><div class="l">운용자산</div><div class="v" style="color:var(--blue)" id="p_inv">–</div></div>
+        <div class="eq" style="color:var(--blue)">+</div>
+        <div class="scol"><div class="l">비상금</div><div class="v" style="color:var(--blue)" id="p_em_d">–</div></div>
+        <div class="eq" style="color:var(--blue)">=</div>
+        <div class="scol"><div class="l">총자산</div><div class="v" style="color:var(--blue);font-size:16px" id="p_tot">–</div></div>
+      </div>
+      <div style="font-size:10px;color:var(--text3);line-height:1.6;padding:5px 0">결혼·의료·차량 등 이벤트 지출 용도. 운용 시뮬레이션에서 제외.</div>
+    </div>
+    <div>
+      <div class="slbl" style="color:var(--green-text)">법인 — 가수금</div>
+      <div class="ig3">
+        <div class="ic c"><label>가수금 잔액</label><div class="irow"><input type="number" id="corp_loan" value="100000" oninput="updateSum()"><span class="un">만</span></div></div>
+        <div class="ic c"><label>가수금 수익률</label><div class="irow"><input type="number" id="corp_rate" value="4" step="0.5"><span class="un">%</span></div></div>
+        <div class="ic c"><label>법인 청산 나이</label><div class="irow"><input type="number" id="corp_close" value="72"><span class="un">세</span></div></div>
+        <div class="ic c"><label>법인 급여</label><div class="irow"><input type="number" id="corp_s" value="300"><span class="un">만/월</span></div></div>
+        <div class="ic c"><label>법인 경비</label><div class="irow"><input type="number" id="corp_e" value="300"><span class="un">만/월</span></div></div>
+        <div class="ic em"><label>건보료 절감</label><div class="irow"><input type="number" id="ins_save" value="248"><span class="un">만/월</span></div></div>
+      </div>
+      <div class="sumrow" style="background:var(--green-bg)">
+        <div class="scol"><div class="l">운용자산</div><div class="v" style="color:var(--green)" id="c_inv">–</div></div>
+        <div class="eq" style="color:var(--green)">+</div>
+        <div class="scol"><div class="l">가수금</div><div class="v" style="color:var(--amber)" id="c_loan_d">–</div></div>
+        <div class="eq" style="color:var(--green)">=</div>
+        <div class="scol"><div class="l">총자산</div><div class="v" style="color:var(--green);font-size:16px" id="c_tot">–</div></div>
+      </div>
+      <div style="font-size:10px;color:var(--text3);line-height:1.6;padding:5px 0">급여+경비 지출로 매년 소진. 청산 시까지 수익 발생.</div>
+    </div>
+  </div>
+
+  <div class="save-row">
+    <button class="sbtn save" onclick="saveSettings()">💾 저장</button>
+    <button class="sbtn" onclick="loadSettings()">📂 불러오기</button>
+    <button class="sbtn" style="font-size:11px;color:var(--text3)" onclick="openJsonModal('export')">📋 JSON 복사</button>
+    <button class="sbtn" style="font-size:11px;color:var(--text3)" onclick="openJsonModal('import')">📌 JSON 붙여넣기</button>
+  </div>
+  <div id="save_status"></div>
+  <button class="rbtn" onclick="runCompare()">▶ 비교 시뮬레이션 실행</button>
+</div>
+
+<div class="card" id="R1" style="display:none">
+  <div class="ct">핵심 비교 결과</div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px" id="cmpGrid"></div>
+</div>
+
+<div class="bcard" id="R2" style="display:none">
+  <div class="bt">법인 설립 순편익 분석</div>
+  <div class="bg4" id="benefitGrid"></div>
+</div>
+
+<div class="card" id="R3" style="display:none">
+  <div class="ct">연도별 총자산 추이 비교</div>
+  <div class="leg">
+    <span><span class="ld" style="background:#378ADD"></span>개인 총자산 (운용+비상금)</span>
+    <span><span class="ld" style="background:#1D9E75"></span>법인 총자산 (운용+가수금)</span>
+    <span><span class="ld" style="background:#BA7517"></span>법인 가수금 잔액</span>
+  </div>
+  <div class="cw"><canvas id="cmpChart"></canvas></div>
+</div>
+
+<div class="card" id="R5" style="display:none">
+  <div class="ct">구간별 평균 자산 비교 (개인 vs 법인)</div>
+  <div class="cw" style="height:200px"><canvas id="savingChart"></canvas></div>
+</div>
+
+<div class="card" id="R4" style="display:none">
+  <div class="ct">연도별 상세 비교</div>
+  <div style="overflow-x:auto"><table><thead id="TH"></thead><tbody id="TB"></tbody></table></div>
+</div>
+
+</div>
+<script>
+let ci=null;
+function g(id){const e=document.getElementById(id);return e?parseFloat(e.value)||0:0;}
+function gn(id){const e=document.getElementById(id);return e?parseFloat(e.value)||0:0;}
+function fa(v){const _v=Math.round(v/1000)/10;return (_v<0?'–':'')+Math.abs(_v).toFixed(1)+'억';}
+function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+const DEFAULTS={
+  a_dc:235000,a_irp:22300,a_tf:10000,a_stock:74000,a_safe:59300,dom_ratio_pct:35,
+  spr:6.2,sfr:2.6,work_years:19,
+  monthly:3000,monthly2:2000,monthly3:1500,monthly4:1100,monthly5:1000,inflation:2.5,
+  retireAge:57,lifeAge:85,nps_m:150,nps_a:62,hm:250,ha:70,irp_draw:1500,
+  p_em:100000,corp_loan:50000,corp_rate:4,corp_close:72,corp_s:300,corp_e:300,ins_save:248
+};
+
+function markChanged(el){
+  if(!el||!el.id) return;
+  const def=DEFAULTS[el.id];
+  if(def===undefined) return;
+  const cur=el.type==='checkbox'?el.checked:(parseFloat(el.value)||0);
+  const dv=typeof def==='boolean'?def:(parseFloat(def)||0);
+  cur!==dv?el.classList.add('changed'):el.classList.remove('changed');
+}
+
+function initChangeTracking(){
+  document.querySelectorAll('input[id]').forEach(el=>{
+    markChanged(el);
+    el.addEventListener('input',()=>markChanged(el));
+    el.addEventListener('change',()=>markChanged(el));
+  });
+}
+
+function toggleTheme(){document.documentElement.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')==='dark'?'':'dark');}
+
+function updateSum(){
+  const dc=g('a_dc'),irp=g('a_irp'),tf=g('a_tf'),st=g('a_stock'),sf=g('a_safe');
+  const tot=dc+irp+tf+st+sf,em=g('p_em'),loan=g('corp_loan');
+  set('s_dc',fa(dc));set('s_irp',fa(irp));set('s_tf',fa(tf));set('s_st',fa(st));set('s_sf',fa(sf));set('s_total',fa(tot));
+  set('p_inv',fa(tot));set('p_em_d',fa(em));set('p_tot',fa(tot+em));
+  set('c_inv',fa(tot));set('c_loan_d',fa(loan));set('c_tot',fa(tot+loan));
+  const b=document.getElementById('totalBadge');
+  if(b){b.textContent='합계: '+fa(tot);b.className='tbadge '+(Math.abs(tot-400000)<50000?'tok':'twn');}
+}
+
+function calcTax(yr,dc){
+  if(!yr||!dc)return 0;
+  const gc=yr<=5?yr*300:(yr<=10?1500+(yr-5)*500:(yr<=20?4000+(yr-10)*800:(yr<=30?12000+(yr-20)*1000:22000+(yr-30)*1200)));
+  const hy=Math.max(0,(dc-gc)/yr*12);
+  const hd=hy<=8e6?hy*.55:(hy<=3e7?4.4e6+(hy-8e6)*.45:(hy<=6e7?1.429e7+(hy-3e7)*.35:(hy<=1e8?2.479e7+(hy-6e7)*.25:3.479e7+(hy-1e8)*.15)));
+  const pt=Math.max(0,(hy-hd)/12*yr);
+  if(!pt)return 0;
+  const t=pt<=1.4e7?pt*.06:(pt<=5e7?pt*.15-8.4e5:(pt<=8.8e7?pt*.24-6.24e6:(pt<=1.5e8?pt*.35-1.536e7:(pt<=3e8?pt*.38-1.94e7:(pt<=5e8?pt*.40-2.54e7:pt*.42-3.1e7)))));
+  return Math.round(Math.max(0,t));
+}
+
+
+
+
+// 인출 구성 기반 건보료 산정 소득 계산
+
+
+function simulate(isCorp){
+  const ra=g('retireAge'),la=g('lifeAge');
+  const useInfl=document.getElementById('use_inflation')?.checked!==false;
+  const inf=useInfl?g('inflation')/100:0;
+  const adc=g('a_dc'),airp=g('a_irp'),atf=g('a_tf'),ast=g('a_stock'),asf=g('a_safe');
+  const spr=g('spr')/100,sfr=g('sfr')/100,id=g('irp_draw');
+  const nm=g('nps_m'),na=g('nps_a'),hm=g('hm'),ha=g('ha');
+  const cs=g('corp_s'),cc=g('corp_close'),cr=g('corp_rate')/100,ce=g('corp_e');
+  const dca=Math.round(adc*spr),tb=calcTax(g('work_years'),adc);
+  const dr=g('dom_ratio_pct')/100||0.35; // 국내주식 비율 (기본 35%)
+  let dc=adc,irp=airp,tf=atf,st=ast,sf=asf,dcP=adc,irpP=airp+atf; // irpP: IRP+안세공 원금
+  let loan=isCorp?g('corp_loan'):g('p_em');
+  let 총세=0;const rows=[];
+
+  function life(age){
+    const base=age<=61?g('monthly'):age<=65?g('monthly2')||g('monthly'):age<=69?g('monthly3')||g('monthly2')||g('monthly'):age<=74?g('monthly4')||g('monthly3')||g('monthly'):g('monthly5')||g('monthly4')||g('monthly3')||g('monthly');
+    return isCorp&&age<cc?Math.max(0,base-cs):base;
+  }
+
+  for(let i=0;i<la-ra+1;i++){
+    const age=ra+i,yr=i+1;
+    const lf=Math.round(life(age)*12*(1+inf)**i);
+    dc+=Math.round(dc*spr);irp+=Math.round(irp*spr);tf+=Math.round(tf*spr);
+    st+=Math.round(st*spr);sf+=Math.round(sf*sfr);
+    if(isCorp) loan=Math.max(0,loan*(1+cr)-(cs+ce)*12);
+    const nps=(age>=na?nm*12:0)+(age>=ha?hm*12:0);
+    let r=Math.max(0,lf-nps);
+    // 전략A
+    let tfo=Math.min(r,tf);tf=Math.max(0,tf-tfo);r=Math.max(0,r-tfo);
+    let sd=Math.round(st*dr),sf2=st-sd;
+    const do2=Math.min(r,sd);sd=Math.max(0,sd-do2);r=Math.max(0,r-do2);
+    let sfo=Math.min(r,sf);sf=Math.max(0,sf-sfo);r=Math.max(0,r-sfo);
+    const fo=Math.min(r,sf2);sf2=Math.max(0,sf2-fo);r=Math.max(0,r-fo);
+    st=sd+sf2;
+    let io=Math.min(Math.min(id,irp),r);irp=Math.max(0,irp-io);r=Math.max(0,r-io);
+    let dco=Math.min(r,Math.min(dca,dc));dc=Math.max(0,dc-dco);r=Math.max(0,r-dco);
+    if(r>0&&irp>0){const x=Math.min(r,irp);irp=Math.max(0,irp-x);io+=x;r=Math.max(0,r-x);}
+    if(r>0&&dc>0){const x=Math.min(r,dc);dc=Math.max(0,dc-x);dco+=x;r=Math.max(0,r-x);}
+    if(r>0&&tf>0){const x=Math.min(r,tf);tf=Math.max(0,tf-x);tfo+=x;r=0;}
+    const dt=dc+dco,op=dt>0?Math.min(1,dcP/dt):1;
+    const oi=Math.round(dco*op),yi=dco-oi;
+    const gm=yr<=10?.30:.40;
+    const 퇴직세=tb>0?Math.round(tb*(oi/adc)*(1-gm)*1.1):0;
+    const dc연금세=Math.round(yi*.055);
+    // IRP 연금소득세
+    const irp_tot=irp+io,irp_op=irp_tot>0?Math.min(1,irpP/irp_tot):1;
+    const irp_oi=Math.round(io*irp_op),irp_yi=io-irp_oi;
+    const irp세=Math.round(irp_yi*0.055);
+    irpP=Math.max(0,irpP-irp_oi);
+    const 세=퇴직세+dc연금세+irp세;
+    // DC 세금중 원금분도 dcP에서 차감
+    const dc세금합=퇴직세+dc연금세;
+    const dc세금중원금=dc>0?Math.round(dc세금합*(dcP/dc)):0;
+    dc=Math.max(0,dc-dc세금합);
+    dcP=Math.max(0,dcP-oi-dc세금중원금);
+    총세+=세;
+    const z=dc+irp+tf+st+sf-(r>0?r:0);
+    rows.push({age,z,loan,tz:z+loan,세});
+  }
+  return{rows,총세,last:rows[rows.length-1]};
+}
+
+function runCompare(){
+  updateSum();
+  const P=simulate(false),C=simulate(true);
+  const ra=g('retireAge'),cc=g('corp_close'),iy=cc-ra;
+  const ins=g('ins_save'),it=ins*12*iy/10000;
+  const sp=g('spr')/100;
+  let cum=0;
+  for(let y=0;y<iy;y++) cum=(cum+(g('corp_s')*12+ins*12))*(1+sp);
+  const bf=cum/10000,gs=g('corp_loan')/10000,np=bf-gs;
+  ['R1','R2','R3','R4','R5'].forEach(id=>document.getElementById(id).style.display='block');
+
+  const pu=P.last.z/10000,cu=C.last.z/10000,pt=P.last.tz/10000,ct=C.last.tz/10000;
+  const diff=ct-pt;
+
+  // 가수금 통계 (cmpGrid보다 먼저 선언)
+  const loanRows=C.rows.filter(r=>r.loan>0);
+  const loanGone=C.rows.find(r=>r.loan<=0);
+  const loanGoneAge=loanGone?loanGone.age:null;
+  const loanPeak=C.rows[0]?C.rows[0].loan:0;
+  const loanAnnualAvg=loanRows.length>1?Math.round((loanRows[0].loan-loanRows[loanRows.length-1].loan)/loanRows.length):0;
+
+  document.getElementById('cmpGrid').innerHTML=`
+    <div class="cc"><div class="cl">개인 — 85세 잔여</div>
+      <div class="cr"><span class="n">운용자산</span><span class="vp">${pu.toFixed(1)}억</span></div>
+      <div class="cr"><span class="n">비상금 잔액</span><span class="vp">${(P.last.loan/10000).toFixed(1)}억</span></div>
+      <div class="cr" style="margin-top:4px;padding-top:6px;border-top:.5px solid var(--border2)"><span class="n" style="font-weight:700">총자산</span><span class="vp" style="font-size:16px">${pt.toFixed(1)}억</span></div>
+    </div>
+    <div class="cc"><div class="cl">법인 — 85세 잔여</div>
+      <div class="cr"><span class="n">운용자산</span><span class="vc">${cu.toFixed(1)}억</span></div>
+      <div class="cr"><span class="n">가수금 잔액</span><span class="va">${(C.last.loan/10000).toFixed(1)}억</span></div>
+      <div class="cr" style="margin-top:4px;padding-top:6px;border-top:.5px solid var(--border2)"><span class="n" style="font-weight:700">총자산 (운용+가수금)</span><span class="vc" style="font-size:16px">${ct.toFixed(1)}억</span></div>
+    </div>
+    <div class="cc"><div class="cl">가수금 소진 현황</div>
+      <div class="cr"><span class="n">초기 가수금</span><span class="vb">${(g('corp_loan')/10000).toFixed(1)}억</span></div>
+      <div class="cr"><span class="n">연간 지출 (급여+경비)</span><span class="va">-${((g('corp_s')+g('corp_e'))*12/10000).toFixed(2)}억</span></div>
+      <div class="cr"><span class="n">연간 수익 (${g('corp_rate')}%)</span><span class="vg">+${(g('corp_loan')*g('corp_rate')/100/10000).toFixed(2)}억</span></div>
+      <div class="cr"><span class="n">소진 시점</span><span class="va">${loanGoneAge?loanGoneAge+'세':'기대수명 내 유지'}</span></div>
+      <div class="cr"><span class="n">85세 잔액</span><span class="${C.last.loan>0?'vc':'vr'}">${(C.last.loan/10000).toFixed(1)}억</span></div>
+    </div>
+    <div class="cc"><div class="cl">비교 요약</div>
+      <div class="cr"><span class="n">총자산 차이</span><span class="${diff>=0?'vg':'vr'}">${diff>=0?'+':''}${diff.toFixed(1)}억</span></div>
+      <div class="cr"><span class="n">개인 누적세금</span><span class="vp">${(P.총세/10000).toFixed(2)}억</span></div>
+      <div class="cr"><span class="n">법인 누적세금</span><span class="vc">${(C.총세/10000).toFixed(2)}억</span></div>
+      <div class="cr"><span class="n">세금 절감</span><span class="vg">${((P.총세-C.총세)/10000).toFixed(2)}억</span></div>
+      <div class="cr"><span class="n">건보료 절감 누적</span><span class="vg">${it.toFixed(1)}억</span></div>
+    </div>`;
+
+  document.getElementById('benefitGrid').innerHTML=`
+    <div class="bc"><div class="l">급여 절감 누적</div><div class="v vg">${(g('corp_s')*12*iy/10000).toFixed(1)}억</div><div class="s">월 ${g('corp_s')}만 × ${iy}년</div></div>
+    <div class="bc"><div class="l">건보료 절감 누적</div><div class="v vg">${it.toFixed(1)}억</div><div class="s">월 ${ins}만 × ${iy}년</div></div>
+    <div class="bc"><div class="l">절약분 복리 효과</div><div class="v vb">${bf.toFixed(1)}억</div><div class="s">성장 ${g('spr')}% × ${iy}년 복리</div></div>
+    <div class="bc"><div class="l">가수금 소진</div><div class="v vr">-${gs.toFixed(1)}억</div><div class="s">법인 운영 투입</div></div>
+    <div class="bc big"><div class="l">법인 순편익 (복리 포함)</div><div class="v ${np>=0?'vg':'vr'}">${np>=0?'+':''}${np.toFixed(1)}억</div><div class="s">복리 ${bf.toFixed(1)}억 − 가수금 ${gs.toFixed(1)}억</div></div>
+    <div class="bc big"><div class="l">총자산 기준 법인 우위</div><div class="v ${diff>=0?'vg':'vr'}">${diff>=0?'+':''}${diff.toFixed(1)}억</div><div class="s">법인 총 vs 개인 총 (동일 운용+10억 기준)</div></div>
+    <div class="bc"><div class="l">가수금 소진 시점</div><div class="v ${loanGoneAge?'va':'vc'}">${loanGoneAge?loanGoneAge+'세':'기대수명 내 유지'}</div><div class="s">${loanGoneAge?'이후 급여·경비 중단':''}</div></div>
+    <div class="bc"><div class="l">85세 가수금 잔액</div><div class="v ${C.last.loan>0?'vc':'vr'}">${(C.last.loan/10000).toFixed(1)}억</div><div class="s">${C.last.loan>0?'잔액 남음':'완전 소진'}</div></div>
+    <div class="bc"><div class="l">연평균 순감소</div><div class="v va">-${(loanAnnualAvg/10000).toFixed(1)}억/년</div><div class="s">소진 기간 평균</div></div>
+    <div class="bc"><div class="l">초기 가수금</div><div class="v vb">${(loanPeak/10000).toFixed(1)}억</div><div class="s">법인 설립 시점</div></div>`;
+
+  const lbs=P.rows.map(r=>r.age+'세');
+  const pT=P.rows.map(r=>+(r.tz/10000).toFixed(1));
+  const cT=C.rows.map(r=>+(r.tz/10000).toFixed(1));
+  const cL=C.rows.map(r=>+(r.loan/10000).toFixed(1));
+  if(ci)ci.destroy();
+  const dk=document.documentElement.getAttribute('data-theme')==='dark';
+  const tc=dk?'#a0a09a':'#666';
+  // 차이 데이터 (법인-개인)
+  const diffData=lbs.map((_,i)=>+((cT[i]||0)-(pT[i]||0)).toFixed(2));
+  ci=new Chart(document.getElementById('cmpChart'),{type:'line',data:{labels:lbs,datasets:[
+    {label:'개인 총자산',data:pT,borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,0.07)',borderWidth:2,pointRadius:0,tension:0.3,fill:true,yAxisID:'y'},
+    {label:'법인 총자산',data:cT,borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.07)',borderWidth:2,pointRadius:0,tension:0.3,fill:true,yAxisID:'y'},
+    {label:'법인 가수금',data:cL,borderColor:'#BA7517',backgroundColor:'transparent',borderWidth:1.5,borderDash:[4,3],pointRadius:0,tension:0.3,yAxisID:'y'},
+    {label:'법인-개인 차이',data:diffData,borderColor:'#9B59B6',backgroundColor:diffData.map(v=>v>=0?'rgba(155,89,182,0.15)':'rgba(212,90,48,0.15)'),borderWidth:2,pointRadius:0,tension:0.3,fill:true,yAxisID:'y2',borderDash:[2,2]},
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{display:true,position:'bottom',labels:{font:{size:9},color:tc,boxWidth:12,padding:8}},
+      tooltip:{callbacks:{label:c=>{
+        const v=c.parsed.y;
+        if(c.dataset.yAxisID==='y2') return `차이(법인-개인): ${v>=0?'+':''}${v.toFixed(1)}억`;
+        return `${c.dataset.label}: ${v.toFixed(1)}억`;
+      }}}
+    },
+    scales:{
+      x:{ticks:{font:{size:9},color:tc,maxTicksLimit:14},grid:{display:false}},
+      y:{ticks:{font:{size:9},color:tc,callback:n=>n+'억'},grid:{color:'rgba(128,128,128,0.08)'},title:{display:true,text:'총자산',font:{size:9},color:tc}},
+      y2:{position:'right',ticks:{font:{size:9},color:'#9B59B6',callback:n=>(n>=0?'+':'')+n+'억'},grid:{display:false},title:{display:true,text:'차이',font:{size:9},color:'#9B59B6'}}
+    }}});
+
+  // ━━━━ 새 시각화 ━━━━
+
+  // R5: 구간별 누적 절감액 (막대)
+  const bands = ['57~61','62~65','66~69','70~74','75~85'];
+  const bandEdges = [57,62,66,70,75,86];
+  const bandSaving = bands.map((_,bi)=>{
+    const startAge=bandEdges[bi], endAge=bandEdges[bi+1];
+    let pSum=0, cSum=0;
+    P.rows.forEach(r=>{if(r.age>=startAge&&r.age<endAge) pSum+=r.z||0;});
+    C.rows.forEach(r=>{if(r.age>=startAge&&r.age<endAge) cSum+=r.z||0;});
+    return +((cSum-pSum)/10000).toFixed(1);
+  });
+  if(window._savCI) window._savCI.destroy();
+  window._savCI = new Chart(document.getElementById('savingChart'),{
+    type:'bar',
+    data:{
+      labels:bands,
+      datasets:[
+        {label:'개인 평균자산',data:bands.map((_,bi)=>{
+          const s=bandEdges[bi],e=bandEdges[bi+1];
+          const rows=P.rows.filter(r=>r.age>=s&&r.age<e);
+          return rows.length?+(rows.reduce((a,r)=>a+(r.z||0),0)/rows.length/10000).toFixed(1):0;
+        }),backgroundColor:'rgba(55,138,221,0.5)',borderColor:'#378ADD',borderWidth:1,borderRadius:3},
+        {label:'법인 평균자산',data:bands.map((_,bi)=>{
+          const s=bandEdges[bi],e=bandEdges[bi+1];
+          const rows=C.rows.filter(r=>r.age>=s&&r.age<e);
+          return rows.length?+(rows.reduce((a,r)=>a+(r.z||0),0)/rows.length/10000).toFixed(1):0;
+        }),backgroundColor:'rgba(29,158,117,0.5)',borderColor:'#1D9E75',borderWidth:1,borderRadius:3},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:true,labels:{font:{size:10},color:tc}},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toFixed(1)}억`}}},
+      scales:{
+        x:{ticks:{font:{size:10},color:tc},grid:{display:false}},
+        y:{ticks:{font:{size:9},color:tc,callback:n=>n+'억'},
+           grid:{color:dk?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)'}}
+      }
+    }
+  });
+
+
+  document.getElementById('TH').innerHTML=`<tr>
+    <th class="c">나이</th>
+    <th style="color:#185FA5">개인 운용</th><th style="color:#185FA5">비상금</th><th style="color:#185FA5;font-weight:900">개인 총계</th>
+    <th style="color:#1D9E75">법인 운용</th><th style="color:#BA7517">가수금 잔액</th><th style="color:#BA7517">가수금 증감</th><th style="color:#3B6D11;font-weight:900">법인 총계</th>
+    <th>차이</th></tr>`;
+  const tb=document.getElementById('TB');tb.innerHTML='';
+  let prevLoan=C.rows[0]?C.rows[0].loan+0:0;
+  P.rows.forEach((pr,i)=>{
+    const cr=C.rows[i],d=cr.tz-pr.tz,tr=document.createElement('tr');
+    const loanDiff=i===0?0:cr.loan-(C.rows[i-1].loan);
+    const loanDiffStr=loanDiff===0?'–':(loanDiff>0?'<span style="color:var(--green)">+'+fa(loanDiff)+'</span>':'<span style="color:var(--red)">'+fa(loanDiff)+'</span>');
+    tr.innerHTML=`<td class="c">${pr.age}세</td>
+      <td style="color:#378ADD">${fa(pr.z)}</td><td style="color:#185FA5">${fa(pr.loan)}</td><td style="color:#185FA5;font-weight:700">${fa(pr.tz)}</td>
+      <td style="color:#1D9E75">${fa(cr.z)}</td>
+      <td style="color:${cr.loan>0?'#BA7517':'var(--text3)'}">${cr.loan>0?fa(cr.loan):'소진'}</td>
+      <td style="font-size:10px">${loanDiffStr}</td>
+      <td style="color:#3B6D11;font-weight:700">${fa(cr.tz)}</td>
+      <td style="font-weight:700;color:${d>=0?'var(--green)':'var(--red)'}">${d>=0?'+':''}${(d/10000).toFixed(1)}억</td>`;
+    tb.appendChild(tr);
+  });
+  const tot=document.createElement('tr');tot.className='tot';
+  tot.innerHTML=`<td class="c">최종</td><td>–</td><td>–</td><td style="color:#185FA5;font-weight:700">${(P.last.tz/10000).toFixed(1)}억</td><td>–</td><td style="color:${C.last.loan>0?'#BA7517':'var(--text3)'}">${C.last.loan>0?fa(C.last.loan):'소진'}</td><td>–</td><td style="color:#3B6D11;font-weight:700">${(C.last.tz/10000).toFixed(1)}억</td><td style="color:${diff>=0?'var(--green)':'var(--red)'}">${diff>=0?'+':''}${diff.toFixed(1)}억</td>`;
+  tb.appendChild(tot);
+}
+
+function exportSettings(){
+  const keys=Object.keys(DEFAULTS);
+  const data={__version:'1.1',__source:'compare',__exported:new Date().toISOString()};
+  keys.forEach(k=>{
+    const el=document.getElementById(k);
+    if(el) data[k]=el.type==='checkbox'?el.checked:el.value;
+  });
+  const stratEl=document.querySelector('input[name="strat"]:checked');
+  if(stratEl) data['strat']=stratEl.value;
+  const inflEl=document.getElementById('use_inflation');
+  if(inflEl) data['use_inflation']=inflEl.checked;
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='retirement_'+'compare'+'_'+new Date().toLocaleDateString('ko-KR').replace(/[. ]/g,'').slice(0,-1)+'.json';
+  a.click();
+  const st=document.getElementById('save_status');
+  if(st){st.textContent='JSON 파일로 내보냈습니다';st.style.color='var(--green)';setTimeout(()=>st.textContent='',3000);}
+}
+
+function importSettings(){
+  const input=document.createElement('input');
+  input.type='file'; input.accept='.json';
+  input.onchange=e=>{
+    const file=e.target.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        const MAP={'nps_m':'nps_monthly','nps_a':'nps_age','hm':'housing_monthly','ha':'housing_age','spr':'split_rate','sfr':'safe_rate','a_tf':'a_tax_free','a_tax_free':'a_tf','nps_monthly':'nps_m','nps_age':'nps_a','housing_monthly':'hm','housing_age':'ha','split_rate':'spr','safe_rate':'sfr','p_em':'a_emergency','a_emergency':'p_em','corp_s':'corp_salary','corp_e':'corp_expense','corp_close':'corp_close_age','corp_salary':'corp_s','corp_expense':'corp_e','corp_close_age':'corp_close'};
+        Object.entries(data).forEach(([k,v])=>{
+          if(k.startsWith('__')) return;
+          const mk=MAP[k]||k;
+          const el=document.getElementById(mk);
+          if(el){
+            if(el.type==='checkbox') el.checked=v;
+            else el.value=v;
+            el.dispatchEvent(new Event('input'));
+          }
+        });
+        const strat=data['strat'];
+        if(strat){const r=document.querySelector('input[name="strat"][value="'+strat+'"]');if(r)r.checked=true;}
+        const inflVal=data['use_inflation'];
+        if(inflVal!==undefined){const el=document.getElementById('use_inflation');if(el)el.checked=inflVal;}
+        if(typeof simulate==='function') simulate();
+        if(typeof syncIrpDisplay==='function') syncIrpDisplay();
+        if(typeof updateSum==='function') updateSum();
+        const st=document.getElementById('save_status');
+        if(st){st.textContent='JSON 불러옴 (원본: '+(data.__source||'알수없음')+')';st.style.color='var(--blue)';setTimeout(()=>st.textContent='',4000);}
+      }catch(err){alert('JSON 파일 오류: '+err.message);}
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+
+function openJsonModal(mode){
+  const bg=document.getElementById('jsonModalBg');
+  const title=document.getElementById('jsonModalTitle');
+  const hint=document.getElementById('jsonModalHint');
+  const ta=document.getElementById('jsonModalTa');
+  const copyBtn=document.getElementById('jsonCopyBtn');
+  const applyBtn=document.getElementById('jsonApplyBtn');
+  bg.classList.add('open');
+  bg._mode=mode;
+  if(mode==='export'){
+    title.textContent='JSON 내보내기';
+    hint.textContent='아래 텍스트를 전체 복사(Ctrl+A → Ctrl+C)한 뒤, 다른 시뮬레이터에서 "JSON 가져오기"를 눌러 붙여넣으세요.';
+    const keys=Object.keys(DEFAULTS);
+    const data={__version:'1.1',__source:'compare',__exported:new Date().toISOString()};
+    keys.forEach(k=>{
+      const el=document.getElementById(k);
+      if(el) data[k]=el.type==='checkbox'?el.checked:el.value;
+    });
+    const stratEl=document.querySelector('input[name="strat"]:checked');
+    if(stratEl) data['strat']=stratEl.value;
+    const inflEl=document.getElementById('use_inflation');
+    if(inflEl) data['use_inflation']=inflEl.checked;
+    ta.value=JSON.stringify(data,null,2);
+    ta.readOnly=true;
+    copyBtn.style.display='';
+    applyBtn.style.display='none';
+    setTimeout(()=>{ta.focus();ta.select();},100);
+  } else {
+    title.textContent='JSON 가져오기';
+    hint.textContent='다른 시뮬레이터에서 복사한 JSON을 아래에 붙여넣고 "적용"을 누르세요. 공통 항목이 자동으로 반영됩니다.';
+    ta.value='';
+    ta.readOnly=false;
+    copyBtn.style.display='none';
+    applyBtn.style.display='';
+    setTimeout(()=>ta.focus(),100);
+  }
+}
+
+function closeJsonModal(){
+  document.getElementById('jsonModalBg').classList.remove('open');
+}
+
+function copyJsonModal(){
+  const ta=document.getElementById('jsonModalTa');
+  ta.select();
+  try{
+    document.execCommand('copy');
+    const btn=document.getElementById('jsonCopyBtn');
+    btn.textContent='✅ 복사됨!';
+    setTimeout(()=>btn.textContent='📋 전체 복사',2000);
+  }catch(e){
+    navigator.clipboard&&navigator.clipboard.writeText(ta.value);
+  }
+}
+
+function applyJsonModal(){
+  const ta=document.getElementById('jsonModalTa');
+  try{
+    const data=JSON.parse(ta.value);
+    const MAP={'nps_m':'nps_monthly','nps_a':'nps_age','hm':'housing_monthly','ha':'housing_age','spr':'split_rate','sfr':'safe_rate','a_tf':'a_tax_free','a_tax_free':'a_tf','nps_monthly':'nps_m','nps_age':'nps_a','housing_monthly':'hm','housing_age':'ha','split_rate':'spr','safe_rate':'sfr','p_em':'a_emergency','a_emergency':'p_em','corp_s':'corp_salary','corp_e':'corp_expense','corp_close':'corp_close_age','corp_salary':'corp_s','corp_expense':'corp_e','corp_close_age':'corp_close'};
+    Object.entries(data).forEach(([k,v])=>{
+      if(k.startsWith('__')) return;
+      const mk=MAP[k]||k;
+      const el=document.getElementById(mk);
+      if(el){
+        if(el.type==='checkbox') el.checked=v;
+        else el.value=v;
+        el.dispatchEvent(new Event('input'));
+      }
+    });
+    const strat=data['strat'];
+    if(strat){const r=document.querySelector('input[name="strat"][value="'+strat+'"]');if(r)r.checked=true;}
+    const inflVal=data['use_inflation'];
+    if(inflVal!==undefined){const el=document.getElementById('use_inflation');if(el)el.checked=inflVal;}
+    if(typeof simulate==='function') simulate();
+    if(typeof syncIrpDisplay==='function') syncIrpDisplay();
+    if(typeof updateSum==='function') updateSum();
+    closeJsonModal();
+    const st=document.getElementById('save_status');
+    if(st){st.textContent='JSON 적용 완료 (원본: '+(data.__source||'?')+')';st.style.color='var(--blue)';setTimeout(()=>st.textContent='',4000);}
+  }catch(err){
+    alert('JSON 형식 오류: '+err.message);
+  }
+}
+
+function saveSettings(){
+  const keys=Object.keys(DEFAULTS);
+  const data={};
+  keys.forEach(k=>{
+    const el=document.getElementById(k);
+    if(el) data[k]=el.type==='checkbox'?el.checked:el.value;
+  });
+  data['__saved_at']=new Date().toLocaleString('ko-KR');
+  localStorage.setItem('retirement_compare_v1',JSON.stringify(data));
+  const st=document.getElementById('save_status');
+  if(st){st.textContent='저장 완료 '+data['__saved_at'];st.style.color='var(--green)';setTimeout(()=>st.textContent='',3000);}
+}
+
+function loadSettings(){
+  const raw=localStorage.getItem('retirement_compare_v1');
+  if(!raw){
+    const st=document.getElementById('save_status');
+    if(st){st.textContent='저장된 설정이 없습니다';st.style.color='var(--amber)';setTimeout(()=>st.textContent='',2000);}
+    return;
+  }
+  const data=JSON.parse(raw);
+  Object.entries(data).forEach(([k,v])=>{
+    if(k==='__saved_at') return;
+    const el=document.getElementById(k);
+    if(el){el.type==='checkbox'?el.checked=v:el.value=v;el.dispatchEvent(new Event('input'));}
+  });
+  const st=document.getElementById('save_status');
+  if(st){st.textContent=data['__saved_at']+' 설정 불러옴';st.style.color='var(--blue)';setTimeout(()=>st.textContent='',3000);}
+  updateSum(); runCompare(); setTimeout(initChangeTracking,100);
+}
+
+function autoLoad(){
+  const raw=localStorage.getItem('retirement_compare_v1');
+  if(raw) loadSettings();
+}
+
+window.onload=()=>{updateSum();autoLoad();runCompare();initChangeTracking();};
+</script>
+
+<!-- JSON 모달 -->
+<div class="json-modal-bg" id="jsonModalBg" onclick="if(event.target===this)closeJsonModal()">
+  <div class="json-modal">
+    <div class="json-modal-title" id="jsonModalTitle">JSON 내보내기</div>
+    <div class="json-modal-hint" id="jsonModalHint"></div>
+    <textarea id="jsonModalTa" placeholder="여기에 JSON을 붙여넣으세요..."></textarea>
+    <div class="json-modal-btns">
+      <button onclick="closeJsonModal()">닫기</button>
+      <button class="btn-copy" id="jsonCopyBtn" onclick="copyJsonModal()" style="display:none">📋 전체 복사</button>
+      <button class="btn-primary" id="jsonApplyBtn" onclick="applyJsonModal()" style="display:none">✅ 적용</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
